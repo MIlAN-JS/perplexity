@@ -25,4 +25,13 @@ const validateRegister = [
     validateFunction
 ]
 
-export default validateRegister;
+
+const validateLogin = [
+    body("password").isString(),
+    validateFunction
+]
+
+export {
+
+    validateLogin , validateRegister
+};

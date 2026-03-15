@@ -12,7 +12,8 @@ const userSchema = new mongoose.Schema({
     },
     password : {
         type: String, 
-        required : [true , "password is required"]
+        required : [true , "password is required"], 
+        select : false
     },
     verified : {
         type : Boolean ,
@@ -22,9 +23,9 @@ const userSchema = new mongoose.Schema({
 
 
 
-userSchema.pre("save",async function(next){
+userSchema.pre("save",async function(){
 
-    if(!this.isModified("password")) return next();
+    if(!this.isModified("password")) return ;
     this.password = await bcrypt.hash(this.password , 10);
     
 
@@ -32,8 +33,10 @@ userSchema.pre("save",async function(next){
 
 })
 
-userSchema.methods.comparePassword = function(candidatePassword){
-    return bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.comparePassword = async function(password){
+    console.log(password , "db pass",  this.password)
+
+    return await bcrypt.compare(password, this.password);
 }
 
 
