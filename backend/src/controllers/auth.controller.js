@@ -21,7 +21,7 @@ const registerController = async(req , res , next)=>{
         })
       }
 
-       const response = await userModel.create({
+       const newUser = await userModel.create({
         email , password , userName
        })   
 
@@ -42,7 +42,8 @@ const registerController = async(req , res , next)=>{
 
        res.status(201).json({
         message : "user created success",
-        success : true
+        success : true, 
+        user : newUser
        })
     
         
@@ -192,6 +193,8 @@ const getMeController = async(req , res , next)=>{
             
             
         } catch (error) {
+
+            
             
         }
 

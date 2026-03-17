@@ -1,1 +1,5 @@
 helo
+
+// error handelling 
+// frontend redux toolkit setup 
+//  backend and frontend socket io 
