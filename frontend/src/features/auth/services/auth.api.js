@@ -20,4 +20,26 @@ const registerUser = async({email  , password, userName})=>{
     }
 }
 
-export {registerUser}
+
+
+const loginUser = async({email, password})=>{
+    try {
+
+        const response = await api.post("/login", {email, password})
+        return response.data
+        
+    } catch (error) {
+        console.log("error to login user ", error)  
+    }
+}
+// const getUser = async()=>{
+//     try {
+
+//         const response = await api.post("/login", {email, password})
+//         return response.data
+        
+//     } catch (error) {
+//         console.log("error to login user ", error)  
+//     }
+// }
+export {registerUser, getUser}

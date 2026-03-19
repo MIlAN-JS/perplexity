@@ -1,24 +1,22 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose"
 
 
-const chatSchema =new mongoose.Schema({
-      chatHistory : { // in which chatHistory do one chat belong
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "ChatHistory"
-      }, 
+const chatSchema = new mongoose.Schema({
+    user: {
 
-      content : {
-        type : String , 
-        required : [true , "content is required"]
-      }, 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "user"
 
-      role : {
+    }, 
+    title : {
         type : String, 
-        enum : ["user", "ai"]
-      }
+        required : [true , "title requiredd"]
+    }
 
 },{timestamps : true})
 
 
+const chatModel = mongoose.model("chat", chatSchema)
 
-const chatModel  = mongoose.model("chatModel", chatSchema)
+
+export default chatModel;

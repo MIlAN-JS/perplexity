@@ -1,13 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Dashboard from '../features/chat/ui/pages/Dashboard'
+import { useSelector } from 'react-redux'
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  useEffect(()=>{
+    
+  }, [])
+  
+  const user = useSelector(state => state.auth.user)
+
+
+
 
   return (
     <>
-    <Dashboard/>
+     <h1>hello {user.userName}</h1>
+
     </>
   )
 }

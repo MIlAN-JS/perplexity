@@ -1,7 +1,7 @@
 import userModel from "../models/user.model.js"
 import sendEmail from "../services/email.service.js"
 import jwt   from "jsonwebtoken"
-import chatWithAi from "../services/langchain.service.js"
+
 
 const registerController = async(req , res , next)=>{
     try {

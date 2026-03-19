@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { checkChat } from '../../stateManager/chat.slice'
 
 const Dashboard = () => {
-   const user = useSelector(state => state.auth)
+   const user = useSelector(state => state.auth.user)
    console.log("user  is " , user)
 const {initializeSocketConnection} = useChat()
     useEffect(()=>{
@@ -16,8 +16,8 @@ const {initializeSocketConnection} = useChat()
     console.log(myMsg)
 
   return (
-    // <div>Dashboard: {user}</div>
-    <></>
+    <div>Dashboard: {user}</div>
+    
   )
 }
 
