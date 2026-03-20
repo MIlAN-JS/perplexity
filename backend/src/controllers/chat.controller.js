@@ -6,6 +6,7 @@ import {
   AIMessage,
   SystemMessage,
 } from "@langchain/core/messages";
+
 const sendMessageController = async(req, res , next)=>{
 
 
@@ -91,5 +92,37 @@ const sendMessageController = async(req, res , next)=>{
 
 
 
+const getChatController = async(req , res , next)=>{
+    try {
 
-export {sendMessageController}
+        // user id 
+  const userId = req.userId
+        // chat id 
+
+        const {chatId} = req.params
+
+        // message model search all the chats 
+
+        const messages = await messageModel.find({chat : chatId , user : userId})
+
+        console.log(messages)
+        res.status(200).json({
+            message : "messages found", 
+            success : true , 
+            messages
+
+        })
+
+
+        
+    } catch (error) {
+
+        console.log("cannot get chat", error)
+        res.send("error")
+        
+    }
+}
+
+
+
+export {sendMessageController , getChatController}

@@ -24,6 +24,8 @@ const messageSchema = new mongoose.Schema({
 }, {timestamps : true})
 
 
+messageSchema.index({chat : 1 , user: 1})
+
 const messageModel = mongoose.model("message", messageSchema)
 
 
