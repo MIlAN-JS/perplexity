@@ -21,7 +21,8 @@ const sendMessageController = async(req, res , next)=>{
         
 
 
-            let newChat
+            let newChat = null;
+
             if(!chatId ){      
                 console.log("i runned")
         //Generate a title 
@@ -33,9 +34,9 @@ const sendMessageController = async(req, res , next)=>{
             }
 
 
-        // //store message 
+         //store message 
 
-         const message = await messageModel.create({chat : newChat._id || chatId , role : "human" , user : userId , message : humanMessage })
+         const message = await messageModel.create({chat :   chatId || newChat._id , role : "human" , user : userId , message : humanMessage })
 
         // // fetch all the messages of the chat 
 
