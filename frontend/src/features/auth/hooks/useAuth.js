@@ -1,6 +1,6 @@
     import { useDispatch } from "react-redux"
-    import { loginUser, registerUser } from "../services/auth.api"
-    import { setLoading, setUser } from "../stateManager/auth.slice"
+    import { loginUser, registerUser } from "../services/auth.api.js"
+    import { setLoading, setUser } from "../stateManager/auth.slice.js"
 import { useNavigate } from "react-router"
 
 

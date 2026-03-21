@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react'
-
-import Dashboard from '../features/chat/ui/pages/Dashboard'
 import { useSelector } from 'react-redux'
 
 function App() {
@@ -16,7 +14,7 @@ function App() {
 
   return (
     <>
-     <h1>hello {user.userName}</h1>
+     <h1>hello {user?.userName}</h1>
 
     </>
   )
