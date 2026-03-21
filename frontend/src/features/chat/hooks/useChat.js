@@ -1,4 +1,4 @@
-import { sendMessage } from "../service/chat.api";
+import { getMessages, sendMessage } from "../service/chat.api";
 import { initializeSocketConnection } from "../service/chat.socket.";
  import { useDispatch , useSelector } from 'react-redux';
 import { setChats, setCurrentChat, setLoading, setMessages } from "../stateManager/chat.slice";
@@ -10,21 +10,31 @@ import { setChats, setCurrentChat, setLoading, setMessages } from "../stateManag
 
     const handleSendMessage = async({humanMessage })=>{
         try {
-            dispatch(setLoading(true))
+            // dispatch(setLoading(true))
             const data = await sendMessage({humanMessage , chatId});
-            dispatch(setCurrentChat(data.response.chat._id))
-            dispatch(setMessages(data.response.messages))
-            dispatch(setChats(data.response.chat))
+            // dispatch(setCurrentChat(data.response.chat._id))
+            // dispatch(setMessages(data.response.messages))
+            // dispatch(setChats(data.response.chat))
+            console.log(data)
              
         } catch (error) {
 
-            console.log("cannot call or handle sendMessage Api")
+            console.log("cannot call or handle sendMessage Api", error)
             
         }finally{
             setLoading(false)
         }
     }
 
+    const handleGetMessages = async(chatId)=>{
+        try {
+            const response  = await getMessages(chatId);
+            dispatch(setMessages(response.messages))
+        } catch (err) {
+            consle.log("errr cannot get messages" , err)
+            
+        }
+    }
 
 
 

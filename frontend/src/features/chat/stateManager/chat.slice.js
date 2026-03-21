@@ -20,12 +20,12 @@ const chatSlice = createSlice({
           if(!isChatExists){
             state.chats.push(chat)
           }
-          console.log(state.chats)
+         
 
         },
 
       setMessages : (state , action)=>{
-        state.messages = [...messages , action.payload]
+        state.messages = [...state.messages , action.payload]
       }, 
 
       setCurrentChat : (state , action)=>{

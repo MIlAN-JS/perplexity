@@ -16,7 +16,7 @@ import { useNavigate } from "react-router";
     e.preventDefault();
 
     handleLogin({email , password})
-    navigate('/')
+    navigate('/chat')
 
     
     

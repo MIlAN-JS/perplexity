@@ -13,7 +13,7 @@ const sendMessage = async({humanMessage , chatId})=>{
     try {
 
         const response = await api.post("/send-message",{humanMessage,chatId});
-        return response.data
+        console.log(response)
 
         
     } catch (error) {
@@ -23,6 +23,24 @@ const sendMessage = async({humanMessage , chatId})=>{
     }
 }
 
+
+
+const getMessages = async(chatId)=>{
+
+    try {
+
+        const response = await api.get(`/get-message/chatId`);
+        return response.data
+        
+    } catch (error) {
+
+        console.log("cannot get messages ", error)
+        
+    }
+
+}
+
 export {
-    sendMessage
+    sendMessage, 
+    getMessages
 }

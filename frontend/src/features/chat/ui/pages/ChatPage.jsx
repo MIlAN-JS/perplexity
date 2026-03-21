@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import useChat from "../../hooks/useChat";
+import { useSelector } from "react-redux";
 // ── Icons ──────────────────────────────────────────────────────────────────
 const Icon = ({ d, size = 16, className = "", strokeWidth = 1.8 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -123,9 +124,8 @@ function TypingDots() {
 export default function ChatPage() {
 
 
-  const [messages, setMessages] = useState(initialMessages);
+  
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [reactions, setReactions] = useState({});
   const [showScrollBtn, setShowScrollBtn] = useState(false);
@@ -134,11 +134,17 @@ export default function ChatPage() {
   const scrollRef = useRef(null);
   const textareaRef = useRef(null);
   let chatId = null
-  const {handleSendMessage} = useChat()
+  const {handleSendMessage, loading , messages} = useChat()
+
+
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(()=>{
+    
+  }, [])
 
   const handleScroll = () => {
     const el = scrollRef.current;
@@ -245,8 +251,8 @@ export default function ChatPage() {
         <div ref={scrollRef} onScroll={handleScroll}
           className="flex-1 overflow-y-auto relative"
           style={{ scrollBehavior: "smooth" }}>
-          <div className="max-w-2xl mx-auto px-6 py-8 space-y-6">
-            {messages.map((msg, idx) => (
+          <div className="max-w-2xl mx-auto px-6 py-8 space-y-6 ">
+            { messages&& messages.length>0 ?  messages.map((msg, idx) => (
               <div key={msg.id} className={`msg-enter`}>
                 {msg.role === "user" ? (
                   /* User message — right-aligned plain text */
@@ -272,7 +278,9 @@ export default function ChatPage() {
                   </div>
                 )}
               </div>
-            ))}
+            )) : <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" >No messages please start convo</p>
+          
+          }
 
             {loading && (
               <div className="msg-enter">

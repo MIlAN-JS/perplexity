@@ -1,6 +1,12 @@
+import { useSelector } from "react-redux";
+
+
 export default function Sidebar({ collapsed, setCollapsed , navItems , Icon , Icons , NAV_SECONDARY}) {
 
-  
+  const chats = useSelector(state => state.chat.chats)
+  console.log(chats)
+
+
 
   return (
     <aside className="flex flex-col h-full w-[200px] flex-shrink-0"
@@ -24,7 +30,7 @@ export default function Sidebar({ collapsed, setCollapsed , navItems , Icon , Ic
         ))}
       </div>
 
-      <div className="mx-3 my-1" style={{ borderTop: "1px solid #2a2a2a" }} />
+    
 
       {/* Secondary nav */}
       <div className="px-2 flex-1">
@@ -58,6 +64,27 @@ export default function Sidebar({ collapsed, setCollapsed , navItems , Icon , Ic
           </p>
 
           <div>
+
+            {
+              chats && chats.length>0 ?
+             chats.map((chat)=>(
+               <button
+            key={chat.id}
+            className="w-full text-left text-xs px-2 py-1.5 rounded-md truncate"
+            style={{ color: "#aaa" }}
+            onMouseEnter={e => e.currentTarget.style.background = "#242424"}
+            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+          >
+            {chat.title}
+          </button>
+             ))
+            : 
+            <p className="text-xs px-1" style={{ color: "#555" }}>
+          No chats yet
+        </p>
+
+
+            }
             
           </div>
 
