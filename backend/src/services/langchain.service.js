@@ -1,6 +1,8 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import {ChatMistralAI } from "@langchain/mistralai"
-import {SystemMessage, HumanMessage} from "@langchain/core/messages"
+import {SystemMessage, HumanMessage } from "@langchain/core/messages"
+import searchInternetTool from "../tools/searchInternet.tool.js";
+import {createAgent} from "langchain"
 
 import dotenv from "dotenv"
 dotenv.config()
@@ -15,11 +17,20 @@ const mistralModel = new ChatMistralAI({
     model  : "mistral-medium-latest"
 })
 
-const chatWithAi = async(query)=>{
+const agent = createAgent({
+    model : mistralModel, 
+    tools: [searchInternetTool]
+})
+
+const chatWithAi = async(message)=>{
     try {
 
-        const response =await mistralModel.invoke(query);
-        return response.content
+        console.log(message , "inside chatwithai")
+
+        const response =await agent.invoke({
+            messages : message
+        });
+        return response.messages[response.messages.length -1].text;
 
         
     } catch (error) {

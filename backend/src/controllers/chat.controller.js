@@ -8,123 +8,124 @@ import {
   SystemMessage,
 } from "@langchain/core/messages";
 
-const sendMessageController = async(req, res , next)=>{
+    const sendMessageController = async(req, res , next)=>{
 
-    try {
-        
-        // fetch data
-
-        const humanMessage  =  req.body?.humanMessage
-        const userId = req.userId
-        const chatId = req.body?.chatId
-        console.log(chatId)
-        
-
-
-           let chat = null ;
-        
-            if(!chatId ){      
-                console.log("i runned")
-        //Generate a title 
-            const title = await GenerateChatTitle(humanMessage);
-            console.log(title) 
-        // create a new chat
-          chat = await chatModel.create({user : userId , title : title })
-
-            }else{
-
-                
-            if(!mongoose.Types.ObjectId.isValid(chatId)){
-                return res.status(400).json({
-                    message : "wrong objectId fkk u ", 
-                    success : false
-                })
-            }
-             chat = await chatModel.findById(chatId)
-
-            if(!chat){
-
-                return res.status(400).json({
-                    message : "chat doesnt exist with this chatId", 
-                    success : false, 
-                })
-
-            }
-
-            console.log(chat)
-
-            }
-
-            //check if chat really exists 
-
-
-         //store message 
-
-         const message = await messageModel.create({chat :   chatId || chat._id , role : "human" , user : userId , message : humanMessage })
-
-        // // fetch all the messages of the chat 
-
-         const chatMessages = await messageModel.find({chat : chatId || chat._id})
+        try {
             
-         const formattedChatMessage = chatMessages.map((msg)=>{
-            if(msg.role == "human"){
-                return new HumanMessage(msg.message)
-            } 
-            if(msg.role == "ai"){
-                return new AIMessage(msg.message)
-            }
-         })
+            // fetch data
 
-         
-
-        // // send message to ai 
-
-        const aiResponse =  await chatWithAi(formattedChatMessage);
+            const humanMessage  =  req.body?.humanMessage
+            const userId = req.userId
+            const chatId = req.body?.chatId
+            console.log(chatId)
+            
 
 
-        // store ai response 
+            let chat = null ;
+            
+                if(!chatId ){      
+                    console.log("i runned")
+            //Generate a title 
+                const title = await GenerateChatTitle(humanMessage);
+                console.log(title) 
+            // create a new chat
+            chat = await chatModel.create({user : userId , title : title })
 
-         const aiMessage = await messageModel.create({
-            role : "ai", 
-            message : aiResponse, 
-            chat : chatId || chat._id,
-            user : userId
-         })
+                }else{
 
-         chatMessages.push(aiMessage);
+                    
+                if(!mongoose.Types.ObjectId.isValid(chatId)){
+                    return res.status(400).json({
+                        message : "wrong objectId fkk u ", 
+                        success : false
+                    })
+                }
+                chat = await chatModel.findById(chatId)
 
-         
+                if(!chat){
+
+                    return res.status(400).json({
+                        message : "chat doesnt exist with this chatId", 
+                        success : false, 
+                    })
+
+                }
+
+                console.log(chat)
+
+                }
+
+                //check if chat really exists 
+
+
+            //store message 
+
+            const message = await messageModel.create({chat :   chatId || chat._id , role : "human" , user : userId , message : humanMessage })
+
+            // // fetch all the messages of the chat 
+
+            const chatMessages = await messageModel.find({chat : chatId || chat._id})
+                
+            const formattedChatMessage = chatMessages.map((msg)=>{
+                if(msg.role == "human"){
+                    return new HumanMessage(msg.message)
+                } 
+                if(msg.role == "ai"){
+                    return new AIMessage(msg.message)
+                }
+            })
+
+            
+            console.log(formattedChatMessage)
+
+            // // send message to ai 
+
+            const aiResponse =  await chatWithAi(formattedChatMessage);
+
+
+            // store ai response 
+
+            const aiMessage = await messageModel.create({
+                role : "ai", 
+                message : aiResponse, 
+                chat : chatId || chat._id,
+                user : userId
+            })
+
+            chatMessages.push(aiMessage);
+
+            
+
+            
+
+            console.log(chatMessages)
+
+            res.status(201).json({
+                message : "message sent successfully", 
+                response : {
+                chat : chat , 
+                messages :  chatMessages
+                }
+            })
+
+
+
+            // get response and store response 
 
         
+            
 
-         console.log(chatMessages)
-
-        res.status(201).json({
-            message : "message sent successfully", 
-            response : {
-               chat : chat , 
-               messages :  chatMessages
-            }
-        })
-
-
-
-        // get response and store response 
-
-    
+        } catch (error) {
         
+            console.log("cannot send message" , error)
+            res.status(400).json({
+                message : "cannot chat with ai", 
+                error
+            })
+            
+        }
 
-    } catch (error) {
-    
-        console.log("cannot send message" , error)
-        res.status(400).json({
-            message : "cannot chat with ai", 
-            error
-        })
-        
-    }
-
-} 
+    } 
 
     
 
