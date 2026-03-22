@@ -1,4 +1,5 @@
 import { createSlice, current } from "@reduxjs/toolkit";
+import { isCancel } from "axios";
 
 const initialState = {
     loading : true , 
@@ -14,18 +15,33 @@ const chatSlice = createSlice({
 
       setChats : (state , action)=>{
       
-        const chat = action.payload
-            const isChatExists = state.chats.find(c => c._id === chat._id )
+        const chat = action.payload.flat()
+        state.chats = chat
 
-          if(!isChatExists){
-            state.chats.push(chat)
-          }
-         
+        
+          //   const isChatExists = state.chats.find(c => c._id === chat._id )
+
+          // if(!isChatExists){
+          //   state.chats.push(chat)
+          // }
+
 
         },
 
+        addChat : (state , action)=>{
+          const chat = action.payload
+
+         let isChatExist = state.chats.find(c => c._id === chat._id)
+
+          if(isChatExist){
+            return
+          }
+          state.chats.unshift(chat)
+        },
       setMessages : (state , action)=>{
-        state.messages = [...state.messages , action.payload]
+      
+        state.messages = action.payload
+       
       }, 
 
       setCurrentChat : (state , action)=>{
@@ -41,5 +57,5 @@ const chatSlice = createSlice({
     }
 })
 
-export const {setChats , setMessages , setCurrentChat , setLoading} =  chatSlice.actions;
+export const {setChats , setMessages , setCurrentChat , setLoading , addChat} =  chatSlice.actions;
 export default chatSlice.reducer;

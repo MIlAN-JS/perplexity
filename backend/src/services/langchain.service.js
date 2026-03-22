@@ -18,7 +18,7 @@ const mistralModel = new ChatMistralAI({
 const chatWithAi = async(query)=>{
     try {
 
-        const response =await geminiModel.invoke(query);
+        const response =await mistralModel.invoke(query);
         return response.content
 
         

@@ -3,3 +3,13 @@ helo
 // error handelling 
 // frontend redux toolkit setup 
 //  backend and frontend socket io 
+
+
+
+
+
+
+
+
+
+fuckkkkkkkkkkkk -- >  spend four hourin debugging just to find out why my values are not rendered just because of nested array ahh shittttt ttttt my head hurtss like helll wtf is event this shit about

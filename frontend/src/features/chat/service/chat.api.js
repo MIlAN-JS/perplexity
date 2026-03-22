@@ -13,7 +13,7 @@ const sendMessage = async({humanMessage , chatId})=>{
     try {
 
         const response = await api.post("/send-message",{humanMessage,chatId});
-        console.log(response)
+       return response.data
 
         
     } catch (error) {
@@ -24,12 +24,11 @@ const sendMessage = async({humanMessage , chatId})=>{
 }
 
 
-
 const getMessages = async(chatId)=>{
 
     try {
 
-        const response = await api.get(`/get-message/chatId`);
+        const response = await api.get(`/get-message/${chatId}`);
         return response.data
         
     } catch (error) {
@@ -40,7 +39,19 @@ const getMessages = async(chatId)=>{
 
 }
 
+const getAllChat = async ()=>{
+    try {
+        
+        const response = await api.get("/get-chats");
+        return response.data
+
+    } catch (error) {
+        console.log("cannot get all chat", error)
+    }
+}
+
 export {
     sendMessage, 
-    getMessages
+    getMessages, 
+    getAllChat
 }

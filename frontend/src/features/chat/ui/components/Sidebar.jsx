@@ -1,116 +1,151 @@
-import { useSelector } from "react-redux";
 
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentChat } from "../../stateManager/chat.slice.js";
+import useChat from "../../hooks/useChat";
 
-export default function Sidebar({ collapsed, setCollapsed , navItems , Icon , Icons , NAV_SECONDARY}) {
-
-  const chats = useSelector(state => state.chat.chats)
-  console.log(chats)
-
-
-
-  return (
-    <aside className="flex flex-col h-full w-[200px] flex-shrink-0"
-      style={{ background: "#1a1a1a", borderRight: "1px solid #2a2a2a" }}>
-
-      {/* Top nav items */}
-      <div className="px-2 pt-3 pb-1">
-        {navItems.map(item => (
-          <button key={item.label}
-            className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors"
-            style={{
-              background: item.active ? "#2d2d2d" : "transparent",
-              color: item.active ? "#f0f0f0" : "#999",
-            }}
-            onMouseEnter={e => { if (!item.active) e.currentTarget.style.background = "#242424"; }}
-            onMouseLeave={e => { if (!item.active) e.currentTarget.style.background = "transparent"; }}
-          >
-            <Icon d={Icons[item.icon]} size={15} />
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </div>
+  export default function Sidebar({ collapsed, setCollapsed , navItems , Icon , Icons , NAV_SECONDARY  }) {
 
     
-
-      {/* Secondary nav */}
-      <div className="px-2 flex-1">
-        {NAV_SECONDARY.map(item => (
-          <button key={item.label}
-            className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors"
-            style={{ color: "#999" }}
-            onMouseEnter={e => e.currentTarget.style.background = "#242424"}
-            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-          >
-            <Icon d={Icons[item.icon]} size={15} />
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* Recent section */}
-      <div className="px-3 pb-2">
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center justify-between w-full text-xs px-1 py-1.5 mb-1"
-          style={{ color: "#666" }}
-        >
-          <span className="uppercase tracking-wider font-medium">Recent</span>
-          <Icon d={collapsed ? Icons.chevronDown : Icons.chevronUp} size={12} />
-        </button>
-        {!collapsed && (
-         <>
-          <p className="text-xs px-1 leading-relaxed" style={{ color: "#555" }}>
-            Recent and active threads will appear here.
-          </p>
-
-          <div>
-
-            {
-              chats && chats.length>0 ?
-             chats.map((chat)=>(
-               <button
-            key={chat.id}
-            className="w-full text-left text-xs px-2 py-1.5 rounded-md truncate"
-            style={{ color: "#aaa" }}
-            onMouseEnter={e => e.currentTarget.style.background = "#242424"}
-            onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-          >
-            {chat.title}
-          </button>
-             ))
-            : 
-            <p className="text-xs px-1" style={{ color: "#555" }}>
-          No chats yet
-        </p>
+const chats = useSelector(state => state.chat.chats)
+const loading = useSelector(state => state.chat.loading)
+const chatId = useSelector(state => state.chat.currentChatId)
+const dispatch = useDispatch()
+const {handleGetMessages} = useChat()
+// console.log(chatId)
+// console.log(loading)
 
 
-            }
-            
-          </div>
+ 
+    return (
+      <aside className="flex flex-col h-full w-[200px] flex-shrink-0  "
+        style={{ background: "#1a1a1a", borderRight: "1px solid #2a2a2a" }}>
 
-         </>
-
-           
-
-        )}
-      </div>
-
-      <div className="mx-3 mb-2" style={{ borderTop: "1px solid #2a2a2a" }} />
-
-      {/* Sign In */}
-      <button
-        className="flex items-center gap-3 mx-2 mb-3 px-3 py-2 rounded-lg text-sm"
-        style={{ color: "#999" }}
-        onMouseEnter={e => e.currentTarget.style.background = "#242424"}
-        onMouseLeave={e => e.currentTarget.style.background = "transparent"}
-      >
-        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
-          style={{ background: "#333", color: "#aaa" }}>
-          <Icon d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" size={12} />
+        {/* Top nav items */}
+        <div className="px-2 pt-3 pb-1">
+          {navItems.map(item => (
+            <button key={item.label}
+              className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors"
+              style={{
+                background: item.active ? "#2d2d2d" : "transparent",
+                color: item.active ? "#f0f0f0" : "#999",
+              }}
+              onMouseEnter={e => { if (!item.active) e.currentTarget.style.background = "#242424"; }}
+              onMouseLeave={e => { if (!item.active) e.currentTarget.style.background = "transparent"; }}
+            >
+              <Icon d={Icons[item.icon]} size={15} />
+              <span>{item.label}</span>
+            </button>
+          ))}
         </div>
-        <span>Sign In</span>
-        <Icon d="M9 18l6-6-6-6" size={13} className="ml-auto" />
-      </button>
-    </aside>
-  );
-}
+
+       
+
+      
+
+        {/* Secondary nav */}
+        <div className="px-2 flex-1">
+          {NAV_SECONDARY.map(item => (
+            <button key={item.label}
+            onClick={()=>{
+              if(item.action){
+                item.action()
+              }
+            }}
+              className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors"
+              style={{ color: "#999" }}
+              onMouseEnter={e => e.currentTarget.style.background = "#242424"}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+            >
+              <Icon d={Icons[item.icon]} size={15} />
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Recent section */}
+        <div className="px-2 flex-1 overflow-y-auto">
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="flex items-center justify-between w-full text-xs px-1 py-1.5 mb-1"
+            style={{ color: "#666" }}
+          >
+            <span className="uppercase tracking-wider font-medium">Recent</span>
+            <Icon d={collapsed ? Icons.chevronDown : Icons.chevronUp} size={12} />
+          </button>
+          {!collapsed && (
+          <>
+            <p className="text-xs px-1 leading-relaxed" style={{ color: "#555" }}>
+              Recent and active threads will appear here.
+            </p>
+
+            <div className="text-white">
+
+              {
+          //       chats && chats.length> 0 ?
+          //      chats.map((chat)=>  (
+                
+          //        ( <button
+          //     key={chat.id}
+          //     className="w-full text-left text-xs px-2 py-1.5 rounded-md truncate"
+          //     style={{ color: "#aaa" }}
+          //     onMouseEnter={e => e.currentTarget.style.background = "#242424"}
+          //     onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+          //   >
+          //    Test
+          //   </button>)
+          //      ))
+          //     : ( <p className="text-xs px-1" style={{ color: "#555" }}>
+          //   No chats yet
+          // </p>)
+
+            loading ? <p>Loading....</p> : chats && chats.length > 0 ? chats.map((c)=>{
+            return <button
+            onClick={(e)=>{
+              
+              dispatch(setCurrentChat(c._id))
+              console.log(chatId)
+              handleGetMessages(c._id)
+            }}
+              key={c._id}
+              className="w-full text-left text-xs px-2 py-1.5 rounded-md truncate"
+              style={{ color: "#aaa" }}
+               onMouseEnter={e => e.currentTarget.style.background = "#242424"}
+               onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+             
+            >
+          {String(c.title).replace(/\*\*/g, "")}
+            </button>
+
+          }) : <p>No chat available</p>
+
+
+              }
+              
+            </div>
+
+          </>
+
+            
+
+          )}
+        </div>
+
+        <div className="mx-3 mb-2" style={{ borderTop: "1px solid #2a2a2a" }} />
+
+        {/* Sign In */}
+        <button
+          className="flex items-center gap-3 mx-2 mb-3 px-3 py-2 rounded-lg text-sm"
+          style={{ color: "#999" }}
+          onMouseEnter={e => e.currentTarget.style.background = "#242424"}
+          onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+        >
+          <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
+            style={{ background: "#333", color: "#aaa" }}>
+            <Icon d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" size={12} />
+          </div>
+          <span>Sign In</span>
+          <Icon d="M9 18l6-6-6-6" size={13} className="ml-auto" />
+        </button>
+      </aside>
+    );
+  }

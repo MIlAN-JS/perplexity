@@ -67,10 +67,10 @@ const sendMessageController = async(req, res , next)=>{
          const chatMessages = await messageModel.find({chat : chatId || chat._id})
             
          const formattedChatMessage = chatMessages.map((msg)=>{
-            if(message.role == "human"){
+            if(msg.role == "human"){
                 return new HumanMessage(msg.message)
             } 
-            if(message.role == "ai"){
+            if(msg.role == "ai"){
                 return new AIMessage(msg.message)
             }
          })
@@ -97,7 +97,7 @@ const sendMessageController = async(req, res , next)=>{
 
         
 
-
+         console.log(chatMessages)
 
         res.status(201).json({
             message : "message sent successfully", 
@@ -126,7 +126,7 @@ const sendMessageController = async(req, res , next)=>{
 
 } 
 
-
+    
 
 const getChatController = async(req , res , next)=>{
     try {
@@ -164,7 +164,7 @@ const getChatController = async(req , res , next)=>{
 const getMessageController = async(req , res, next)=>{
     try {
 
-        const chatId = req.params.chatId
+        const chatId = req.params?.chatId
         const userId = req.userId
 
         const messages = await messageModel.find({chat : chatId , user : userId}).sort({createdAt :1})
@@ -180,9 +180,11 @@ const getMessageController = async(req , res, next)=>{
     } catch (error) {
 
         res.status(400).json({
-            message : "cannot find messages"
+            message : "cannot find messages", 
+        
         })
         
+        console.log(error)
     }
 }
 

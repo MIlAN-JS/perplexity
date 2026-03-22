@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import useChat from "../../hooks/useChat";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setMessages , setLoading , setCurrentChat } from "../../stateManager/chat.slice";
 // ── Icons ──────────────────────────────────────────────────────────────────
 const Icon = ({ d, size = 16, className = "", strokeWidth = 1.8 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
@@ -37,19 +38,13 @@ const initialMessages = [
  
 ];
 
+
 const NAV_ITEMS = [
   { icon: "search", label: "Search" },
   { icon: "computer", label: "Computer", active: true },
 ];
 
-const NAV_SECONDARY = [
-  { icon: "plus", label: "New thread", isAction: true },
-  { icon: "history", label: "History" },
-  { icon: "discover", label: "Discover" },
-  { icon: "spaces", label: "Spaces" },
-  { icon: "finance", label: "Finance" },
-  { icon: "more", label: "More" },
-];
+
 
 
 
@@ -122,6 +117,7 @@ function TypingDots() {
 
 // ── Main Chat Page ────────────────────────────────────────────────────────
 export default function ChatPage() {
+  
 
 
   
@@ -134,16 +130,37 @@ export default function ChatPage() {
   const scrollRef = useRef(null);
   const textareaRef = useRef(null);
   let chatId = null
-  const {handleSendMessage, loading , messages} = useChat()
+  const {handleSendMessage ,handleGetAllChat , handleGetMessages } = useChat()
+  const loading = useSelector(state => state.chat.loading)
+  const messages = useSelector(state => state.chat.messages)
+  const chats = useSelector(state=> state.chat.chats)
+  const dispatch = useDispatch()
 
+  
+  const NAV_SECONDARY = [
+  { icon: "plus", label: "New thread", isAction: true , action : function(){
+     dispatch(setCurrentChat(null))
+     dispatch(setMessages([]))
+     
+  } },
+  { icon: "history", label: "History" },
+  { icon: "discover", label: "Discover" },
+  { icon: "spaces", label: "Spaces" },
+  { icon: "finance", label: "Finance" },
+  { icon: "more", label: "More" },
+];
 
+  console.log(messages)
+  console.log(chatId)
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  // useEffect(() => {
+  //   bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [messages, loading]);
 
   useEffect(()=>{
-    
+
+    handleGetAllChat()
+      
   }, [])
 
   const handleScroll = () => {
@@ -155,7 +172,7 @@ export default function ChatPage() {
   const messageSubmitHandler = async(e)=>{
     console.log(e)
     e.preventDefault();
-    await handleSendMessage({humanMessage : input , chatId})
+    await handleSendMessage({humanMessage : input })
     
 }
 
@@ -196,7 +213,7 @@ export default function ChatPage() {
       `}</style>
 
       {/* Sidebar */}
-      <Sidebar  NAV_SECONDARY = {NAV_SECONDARY} navItems={NAV_ITEMS} Icon = {Icon} Icons = {Icons} collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} />
+      <Sidebar chats={chats}  NAV_SECONDARY = {NAV_SECONDARY} navItems={NAV_ITEMS} Icon = {Icon} Icons = {Icons} collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} loading={loading} />
 
       {/* Main */}
       <div className="flex flex-col flex-1 min-w-0">
@@ -251,22 +268,24 @@ export default function ChatPage() {
         <div ref={scrollRef} onScroll={handleScroll}
           className="flex-1 overflow-y-auto relative"
           style={{ scrollBehavior: "smooth" }}>
+
           <div className="max-w-2xl mx-auto px-6 py-8 space-y-6 ">
+
             { messages&& messages.length>0 ?  messages.map((msg, idx) => (
               <div key={msg.id} className={`msg-enter`}>
-                {msg.role === "user" ? (
+                {msg.role === "human" ? (
                   /* User message — right-aligned plain text */
                   <div className="flex justify-end">
                     <div className="max-w-sm px-4 py-2.5 rounded-2xl text-sm"
                       style={{ background: "#2a2a2a", color: "#e0e0e0", borderBottomRightRadius: 6 }}>
-                      {msg.content}
+                      {msg.message}
                     </div>
                   </div>
                 ) : (
                   /* AI message — left, larger text, action bar below */
                   <div>
                     <p className="text-lg leading-relaxed font-light" style={{ color: "#e8e8e8" }}>
-                      {msg.content}
+                      {msg.message}
                     </p>
                     <MessageActions
                       msgId={msg.id}
